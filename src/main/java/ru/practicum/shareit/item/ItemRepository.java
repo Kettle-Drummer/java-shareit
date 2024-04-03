@@ -43,7 +43,7 @@ public class ItemRepository {
     public Collection<ItemDto> getItemsForUser(Long id) {
         List<ItemDto> list = new ArrayList<>();
         for (Item item : storageItem.values()) {
-            if (item.getOwner().getId() == id) {
+            if (Objects.equals(item.getOwner().getId(), id)) {
                 list.add(ItemMapper.toItemDto(item));
             }
         }

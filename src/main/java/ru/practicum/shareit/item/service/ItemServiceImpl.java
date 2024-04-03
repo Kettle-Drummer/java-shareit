@@ -13,6 +13,7 @@ import ru.practicum.shareit.user.UserRepository;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +35,7 @@ public class ItemServiceImpl implements ItemService {
 
     public ItemDto update(ItemDto itemDto, Long id, Long itemId) {
         Item item = getForIdItem(itemId);
-        if (item.getOwner().getId() == id) {
+        if (Objects.equals(item.getOwner().getId(), id)) {
             if (itemDto.getName() != null) {
                 item.setName(itemDto.getName());
             }

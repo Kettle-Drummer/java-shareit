@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.error.EntityNotFoundException;
 import ru.practicum.shareit.item.ItemRepository;
@@ -15,6 +16,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
@@ -27,9 +29,10 @@ public class ItemServiceImpl implements ItemService {
         if (id != null) {
             User user = userRepository.getById(id);
             Item item = itemRepository.create(ItemMapper.toItem(itemDto, user));
+            log.info("Добавлен новый лот: {} пользователем id:{}", itemDto, id);
             return ItemMapper.toItemDto(item);
         } else {
-            throw new EntityNotFoundException("не передали id");
+            throw new EntityNotFoundException("не передан id");
         }
     }
 
@@ -45,6 +48,7 @@ public class ItemServiceImpl implements ItemService {
             if (itemDto.getAvailable() != null) {
                 item.setAvailable(itemDto.getAvailable());
             }
+            log.info("Обновлен лот: {} пользователем id:{}", itemDto, id);
             return ItemMapper.toItemDto(itemRepository.update(item));
         } else {
             throw new EntityNotFoundException("Не совпадает id владельца вещи");
@@ -66,8 +70,7 @@ public class ItemServiceImpl implements ItemService {
 
     public List<ItemDto> searchItem(String textQuery) {
         if (textQuery == null || textQuery.isBlank()) {
-            List<ItemDto> list = new ArrayList<>();
-            return list;
+            return new ArrayList<>();
         }
         return itemRepository.getItemsBySearch(textQuery.toLowerCase());
     }

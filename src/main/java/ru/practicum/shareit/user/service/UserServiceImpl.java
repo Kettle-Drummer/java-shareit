@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.error.ValidationException;
 import ru.practicum.shareit.user.UserRepository;
@@ -10,7 +11,7 @@ import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -27,6 +28,7 @@ public class UserServiceImpl implements UserService {
             throw new ValidationException("Этот Email занят");
         } else {
             userDto.setId(idGen());
+            log.info("Добавление нового пользователя: {}", userDto);
             return UserMapper.toUserDto(userRepository.add(UserMapper.toUser(userDto)));
         }
     }
@@ -57,6 +59,7 @@ public class UserServiceImpl implements UserService {
             }
         }
         userRepository.update(oldUser);
+        log.info("Обновление пользователя: {}", oldUser);
         return UserMapper.toUserDto(oldUser);
     }
 
@@ -64,6 +67,7 @@ public class UserServiceImpl implements UserService {
     public Long delete(Long id) {
         User user = userRepository.getById(id);
         userRepository.delete(id);
+        log.info("Удаление пользователя c id:" + id);
         return id;
     }
 }

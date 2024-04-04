@@ -17,17 +17,17 @@ import java.util.List;
 public class ItemController {
 
     private final ItemServiceImpl itemServiceImpl;
-
+    public static final String OWNER_ID = "X-Sharer-User-Id";
 
     @PostMapping //добавление вещи;
-    public ItemDto addItem(@Valid @RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") Long id) {
+    public ItemDto addItem(@Valid @RequestBody ItemDto itemDto, @RequestHeader(OWNER_ID) Long id) {
         ItemDto item = itemServiceImpl.add(itemDto, id);
         log.info("Add Item{}", item);
         return item;
     }
 
     @PatchMapping("{itemId}")
-    public ItemDto updateItem(@RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") Long id, @PathVariable Long itemId) {
+    public ItemDto updateItem(@RequestBody ItemDto itemDto, @RequestHeader(OWNER_ID) Long id, @PathVariable Long itemId) {
         ItemDto item = itemServiceImpl.update(itemDto, id, itemId);
         log.info("Update Item{}", item);
         return item;
@@ -41,7 +41,7 @@ public class ItemController {
     }
 
     @GetMapping
-    public Collection<ItemDto> getItemsForUser(@RequestHeader("X-Sharer-User-Id") Long id) {
+    public Collection<ItemDto> getItemsForUser(@RequestHeader(OWNER_ID) Long id) {
         log.info("Get items user id{}", id);
         return itemServiceImpl.getItemsForUser(id);
     }

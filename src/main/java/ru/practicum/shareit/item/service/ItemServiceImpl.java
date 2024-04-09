@@ -24,7 +24,6 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
 
-    //добавление вещи;
     public ItemDto add(ItemDto itemDto, Long id) {
         if (id != null) {
             User user = userRepository.getById(id);
@@ -37,7 +36,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     public ItemDto update(ItemDto itemDto, Long id, Long itemId) {
-        Item item = getForIdItem(itemId);
+        Item item = itemRepository.getById(itemId);
         if (Objects.equals(item.getOwner().getId(), id)) {
             if (itemDto.getName() != null) {
                 item.setName(itemDto.getName());
@@ -55,23 +54,20 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
-    public ItemDto getForId(Long itemId) {
-        return ItemMapper.toItemDto(itemRepository.getId(itemId));
-    }
-
-    public Item getForIdItem(Long itemId) {
-        return itemRepository.getId(itemId);
-    }
-
-    public Collection<ItemDto> getItemsForUser(Long id) {
-        return itemRepository.getItemsForUser(id);
+    public ItemDto getById(Long itemId) {
+        return ItemMapper.toItemDto(itemRepository.getById(itemId));
     }
 
 
-    public List<ItemDto> searchItem(String textQuery) {
+    public Collection<ItemDto> getByUser(Long id) {
+        return itemRepository.getByUser(id);
+    }
+
+
+    public List<ItemDto> getBySearch(String textQuery) {
         if (textQuery == null || textQuery.isBlank()) {
             return new ArrayList<>();
         }
-        return itemRepository.getItemsBySearch(textQuery.toLowerCase());
+        return itemRepository.getBySearch(textQuery.toLowerCase());
     }
 }

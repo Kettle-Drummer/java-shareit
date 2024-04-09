@@ -20,35 +20,35 @@ public class ItemController {
     public static final String OWNER_ID = "X-Sharer-User-Id";
 
     @PostMapping //добавление вещи;
-    public ItemDto addItem(@Valid @RequestBody ItemDto itemDto, @RequestHeader(OWNER_ID) Long id) {
+    public ItemDto add(@Valid @RequestBody ItemDto itemDto, @RequestHeader(OWNER_ID) Long id) {
         ItemDto item = itemServiceImpl.add(itemDto, id);
         log.info("Add Item{}", item);
         return item;
     }
 
     @PatchMapping("{itemId}")
-    public ItemDto updateItem(@RequestBody ItemDto itemDto, @RequestHeader(OWNER_ID) Long id, @PathVariable Long itemId) {
+    public ItemDto update(@RequestBody ItemDto itemDto, @RequestHeader(OWNER_ID) Long id, @PathVariable Long itemId) {
         ItemDto item = itemServiceImpl.update(itemDto, id, itemId);
         log.info("Update Item{}", item);
         return item;
     }
 
     @GetMapping("{itemId}")
-    public ItemDto getForId(@PathVariable Long itemId) {
+    public ItemDto getBtId(@PathVariable Long itemId) {
         log.info("Get item id{}", itemId);
-        ItemDto item = itemServiceImpl.getForId(itemId);
+        ItemDto item = itemServiceImpl.getById(itemId);
         return item;
     }
 
     @GetMapping
-    public Collection<ItemDto> getItemsForUser(@RequestHeader(OWNER_ID) Long id) {
+    public Collection<ItemDto> getByUser(@RequestHeader(OWNER_ID) Long id) {
         log.info("Get items user id{}", id);
-        return itemServiceImpl.getItemsForUser(id);
+        return itemServiceImpl.getByUser(id);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchItems(@RequestParam String text) {
+    public List<ItemDto> getBySearch(@RequestParam String text) {
         log.info("search {}, text");
-        return itemServiceImpl.searchItem(text);
+        return itemServiceImpl.getBySearch(text);
     }
 }

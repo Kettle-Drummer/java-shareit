@@ -33,14 +33,14 @@ public class ItemRepository {
     }
 
 
-    public Item getId(Long id) {
+    public Item getById(Long id) {
         if (storageItem.containsKey(id)) {
             return storageItem.get(id);
         }
         throw new EntityNotFoundException("Нет вещи с таким id");
     }
 
-    public Collection<ItemDto> getItemsForUser(Long id) {
+    public Collection<ItemDto> getByUser(Long id) {
         List<ItemDto> list = new ArrayList<>();
         for (Item item : storageItem.values()) {
             if (Objects.equals(item.getOwner().getId(), id)) {
@@ -59,7 +59,7 @@ public class ItemRepository {
         throw new EntityNotFoundException(String.format("Удаление невозможно %s не сущесвует", item));
     }
 
-    public List<ItemDto> getItemsBySearch(String textQuery) {
+    public List<ItemDto> getBySearch(String textQuery) {
         List<ItemDto> items = new ArrayList<>();
         for (Item item : storageItem.values()) {
             if ((item.getName().toLowerCase().contains(textQuery)

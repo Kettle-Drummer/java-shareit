@@ -10,9 +10,9 @@ public interface ItemService {
 
     ItemDto update(ItemDto itemDto, Long id, Long itemId);
 
-    ItemDto getForId(Long itemId);
+    ItemDto getById(Long itemId);
 
-    Collection<ItemDto> getItemsForUser(Long id);
+    Collection<ItemDto> getByUser(Long id);
 
-    List<ItemDto> searchItem(String textQuery);
+    List<ItemDto> getBySearch(String textQuery);
 }

@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto update( Long id, UserDto userDto) {
+    public UserDto update(Long id, UserDto userDto) {
         User oldUser = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Нет пользователя c id:" + id));
         if (userDto.getName() != null) {
             oldUser.setName(userDto.getName());

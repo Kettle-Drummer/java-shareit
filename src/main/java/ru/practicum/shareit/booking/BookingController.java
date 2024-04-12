@@ -23,7 +23,7 @@ public class BookingController {
     @PostMapping
     public BookingResponseDto save(@RequestHeader(USER_ID) Long bookerId,
                                           @Valid @RequestBody BookingRequestDto requestDto) {
-        log.debug("add booking request {}", requestDto);
+        log.info("add booking request {}", requestDto);
         return service.save(bookerId, requestDto);
     }
 
@@ -31,28 +31,28 @@ public class BookingController {
     public BookingResponseDto update(@RequestHeader(USER_ID) Long ownerId,
                                             @PathVariable Long bookingId,
                                             @RequestParam(name = "approved") Boolean bookingStatus) {
-        log.debug("update booking request id={}", bookingId);
+        log.info("update booking request id={}", bookingId);
         return service.update(ownerId, bookingId, bookingStatus);
     }
 
     @GetMapping("/{bookingId}")
     public BookingResponseDto getByBookingId(@RequestHeader(USER_ID) Long id,
                                                     @PathVariable Long bookingId) {
-        log.debug("get booking by id={}", id);
+        log.info("get booking by id={}", id);
         return service.getByBookingId(id, bookingId);
     }
 
     @GetMapping
     public List<BookingResponseDto> getByBookerId(@RequestHeader(USER_ID) Long bookerId,
                                                          @RequestParam(required = false, defaultValue = "ALL") String state) {
-        log.debug("get booking by booker id={}", bookerId);
+        log.info("get booking by booker id={}", bookerId);
         return service.getByBookerId(bookerId, state);
     }
 
     @GetMapping("/owner")
     public List<BookingResponseDto> getByOwnerId(@RequestHeader(USER_ID) Long ownerId,
                                                         @RequestParam(required = false, defaultValue = "ALL") String state) {
-        log.debug("get booking by owner id={}", ownerId);
+        log.info("get booking by owner id={}", ownerId);
         return service.getByOwnerId(ownerId, state);
     }
 }

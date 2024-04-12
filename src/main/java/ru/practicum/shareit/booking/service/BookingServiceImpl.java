@@ -31,8 +31,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingResponseDto save(Long bookerId, BookingRequestDto requestDto) {
         bookingTimeValidation(requestDto);
-        User booker = userRepository.findById(bookerId)
-                .orElseThrow((() -> new EntityNotFoundException("Нет пользователя с id: " + bookerId)));
+        User booker = findUserById(bookerId);
         Item item = itemRepository.findById(requestDto.getItemId())
                 .orElseThrow((() -> new EntityNotFoundException("Нет лота с id: " + requestDto.getItemId())));
         if (!item.getAvailable()) {
@@ -75,13 +74,13 @@ public class BookingServiceImpl implements BookingService {
         } else if (isOwner) {
             return BookingMapper.toBookingResponseDto(booking);
         } else {
-            throw new EntityNotFoundException("Entity not found!");
+            throw new EntityNotFoundException("Запросить может только собственник вещи или автор брони");
         }
     }
 
     @Override
     public List<BookingResponseDto> getByBookerId(Long bookerId, String state) {
-        userRepository.findById(bookerId).orElseThrow(() -> new EntityNotFoundException("Нет пользователя с id: " + bookerId));
+        findUserById(bookerId);
         BookingState fromState;
         try {
             fromState = BookingState.valueOf(state);
@@ -108,7 +107,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingResponseDto> getByOwnerId(Long ownerId, String state) {
-        userRepository.findById(ownerId).orElseThrow(() -> new EntityNotFoundException("Нет пользователя с id: " + ownerId));
+        findUserById(ownerId);
         BookingState fromState;
         try {
             fromState = BookingState.valueOf(state);
@@ -135,13 +134,18 @@ public class BookingServiceImpl implements BookingService {
 
     private void bookingTimeValidation(BookingRequestDto requestDto) {
         if (requestDto.getStart().isBefore(LocalDateTime.now())) {
-            throw new ValidationException("Бронь начинается в будущем");
+            throw new ValidationException("Бронь должна начинаться в будущем");
         }
         if (requestDto.getStart().equals(requestDto.getEnd())) {
-            throw new ValidationException("Бронь начинается раньше, чем заканчивается");
+            throw new ValidationException("Бронь не должна заканчиваться мгновенно");
         }
         if (requestDto.getStart().isAfter(requestDto.getEnd())) {
-            throw new ValidationException("Бронь начинается раньше, чем заканчивается");
+            throw new ValidationException("Бронь должна начинаться раньше, чем заканчивается");
         }
+    }
+
+    private User findUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow((() -> new EntityNotFoundException("Нет пользователя с id: " + userId)));
     }
 }

@@ -2,48 +2,34 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.model.User;
+
+import java.util.Optional;
 
 @UtilityClass
 public class ItemMapper {
 
-    public ItemDto toItemDto(Item item) {
-        return new ItemDto(
-                item.getId(),
-                item.getName(),
-                item.getDescription(),
-                item.getAvailable(),
-                item.getRequest() != null ? item.getRequest() : null);
-    }
-
-    public Item toItemUpdate(ItemDto itemDto, Item oldItem, User user) {
-        Item item = Item.builder()
-                .name(itemDto.getName())
-                .description(itemDto.getDescription())
-                .id(oldItem.getId())
-                .available(itemDto.getAvailable())
-                .request(itemDto.getRequest())
+    public static ItemDto toItemDto(Item item) {
+        return ItemDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getAvailable())
                 .build();
-        item.setOwner(user);
-        if (item.getName() == null) {
-            item.setName(oldItem.getName());
-        }
-        if (item.getDescription() == null) {
-            item.setDescription(oldItem.getDescription());
-        }
-        if (item.getAvailable() == null) {
-            item.setAvailable(oldItem.getAvailable());
-        }
-        return item;
     }
 
-    public Item toItem(ItemDto itemDto, User user) {
+    public static Item toItem(ItemDto itemDto) {
         return Item.builder()
+                .id(itemDto.getId())
                 .name(itemDto.getName())
                 .description(itemDto.getDescription())
-                .owner(user)
                 .available(itemDto.getAvailable())
-                .request(null)
                 .build();
+    }
+
+    public static Item updateItemByGivenDto(Item item, ItemDto itemDto) {
+        Optional.ofNullable(itemDto.getName()).ifPresent(item::setName);
+        Optional.ofNullable(itemDto.getDescription()).ifPresent(item::setDescription);
+        Optional.ofNullable(itemDto.getAvailable()).ifPresent(item::setAvailable);
+        return item;
     }
 }

@@ -8,14 +8,14 @@ public class UserMapper {
     public UserDto toUserDto(User user) {
         return new UserDto(
                 user.getId(),
-                user.getEmail(),
-                user.getName());
+                user.getName(),
+                user.getEmail());
     }
 
     public User toUser(UserDto userDto) {
         return new User(
                 userDto.getId(),
-                userDto.getEmail(),
-                userDto.getName());
+                userDto.getName(),
+                userDto.getEmail());
     }
 }

@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Map;
+
 
 @Slf4j
 @RestControllerAdvice
@@ -26,10 +28,16 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler(value = ValidationException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handlerValidationException(final ValidationException exception) {
         log.info("Ошибка валидации {}", exception.getMessage());
         return new ErrorResponse(exception.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Map<String, String> handlePostmanTest(final IllegalStateException e) {
+        return Map.of("error", e.getMessage());
     }
 
 }

@@ -23,11 +23,12 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ItemRequestServiceImpl implements ItemRequestService{
+public class ItemRequestServiceImpl implements ItemRequestService {
 
     private final ItemRequestRepository requestRepository;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+
     @Override
     public ItemRequestDto add(Long requesterId, ItemRequestDto dto) {
         log.debug("saveRequest method was called in ItemRequestServiceImpl");

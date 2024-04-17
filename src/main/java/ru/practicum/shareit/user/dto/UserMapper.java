@@ -1,21 +1,22 @@
 package ru.practicum.shareit.user.dto;
 
-import lombok.experimental.UtilityClass;
+import org.mapstruct.Builder;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.factory.Mappers;
 import ru.practicum.shareit.user.model.User;
 
-@UtilityClass
-public class UserMapper {
-    public UserDto toUserDto(User user) {
-        return new UserDto(
-                user.getId(),
-                user.getName(),
-                user.getEmail());
-    }
+@Mapper(componentModel = "spring",
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+        builder = @Builder(disableBuilder = true))
+public interface UserMapper {
 
-    public User toUser(UserDto userDto) {
-        return new User(
-                userDto.getId(),
-                userDto.getName(),
-                userDto.getEmail());
-    }
+    UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
+
+    UserDto toUserDto(User source);
+
+    User toUser(UserDto dto);
+
+    User updateUserByGivenDto(UserDto source, @MappingTarget User target);
 }

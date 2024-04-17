@@ -22,43 +22,36 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto add(UserDto userDto) {
         log.info("Добавление нового пользователя: {}", userDto);
-        User user = UserMapper.toUser(userDto);
+        User user = UserMapper.INSTANCE.toUser(userDto);
         user = userRepository.save(user);
-        return UserMapper.toUserDto(user);
+        return UserMapper.INSTANCE.toUserDto(user);
     }
 
     @Override
     public List<UserDto> getAll() {
         return userRepository.findAll().stream()
-                .map(UserMapper::toUserDto)
+                .map(UserMapper.INSTANCE::toUserDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public UserDto getById(Long id) {
-        return UserMapper.toUserDto(userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Нет пользователя c id:" + id)));
+        return UserMapper.INSTANCE.toUserDto(userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Нет пользователя c id:" + id)));
     }
 
     @Override
     public UserDto update(Long id, UserDto userDto) {
         User oldUser = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Нет пользователя c id:" + id));
-        if (userDto.getName() != null) {
-            oldUser.setName(userDto.getName());
-        }
-        if (userDto.getEmail() != null) {
-            oldUser.setEmail(userDto.getEmail());
-        }
         log.info("Обновление пользователя: {}", oldUser);
-        User save = userRepository.save(oldUser);
-        return UserMapper.toUserDto(save);
+
+        User save = UserMapper.INSTANCE.updateUserByGivenDto(userDto, oldUser);
+        return UserMapper.INSTANCE.toUserDto(userRepository.save(save));
     }
 
     @Override
-    public Long delete(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Нет пользователя c id:" + id));
-        userRepository.deleteById(id);
+    public void delete(Long id) {
         log.info("Удаление пользователя c id: {}", id);
-        return id;
+        userRepository.deleteById(id);
     }
 }
 

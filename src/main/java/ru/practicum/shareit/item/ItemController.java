@@ -2,9 +2,11 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.item.service.ItemServiceImpl;
 
 import javax.validation.Valid;
@@ -18,34 +20,36 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemController {
 
-    private final ItemServiceImpl itemServiceImpl;
-    public static final String OWNER_ID = "X-Sharer-User-Id";
+    private final ItemService itemService;
+    public static final String USER_ID = "X-Sharer-User-Id";
 
     @PostMapping
-    public ItemDto add(@Valid @RequestBody ItemDto itemDto, @RequestHeader(OWNER_ID) Long id) {
-        ItemDto item = itemServiceImpl.add(itemDto, id);
-        log.info("Add Item{}", item);
-        return item;
+    public ItemDto add(@RequestHeader(USER_ID) Long id,
+                            @Validated @RequestBody ItemDto itemDto) {
+        log.info("POST request received to save item");
+        return itemService.add(id, itemDto);
     }
 
     @PatchMapping("{itemId}")
-    public ItemDto update(@RequestBody ItemDto itemDto, @RequestHeader(OWNER_ID) Long id, @PathVariable Long itemId) {
-        ItemDto item = itemServiceImpl.update(itemDto, id, itemId);
+    public ItemDto update(@RequestHeader(USER_ID) Long id,
+                          @PathVariable Long itemId,
+                          @RequestBody ItemDto itemDto) {
+        ItemDto item = itemService.update(itemDto, id, itemId);
         log.info("Update Item{}", item);
         return item;
     }
 
     @GetMapping("{itemId}")
-    public ItemDto getById(@RequestHeader(OWNER_ID) Long id,
+    public ItemDto getById(@RequestHeader(USER_ID) Long id,
                            @PathVariable Long itemId) {
         log.info("Get item by id{}", itemId);
-        return itemServiceImpl.getById(id, itemId);
+        return itemService.getById(id, itemId);
     }
 
     @GetMapping
-    public Collection<ItemDto> getByUser(@RequestHeader(OWNER_ID) Long id) {
+    public Collection<ItemDto> getByUser(@RequestHeader(USER_ID) Long id) {
         log.info("Get items by user id{}", id);
-        return itemServiceImpl.getByUser(id);
+        return itemService.getByUser(id);
     }
 
     @GetMapping("/search")
@@ -54,14 +58,14 @@ public class ItemController {
         if (text == null || text.trim().isEmpty()) {
             return Collections.emptyList();
         }
-        return itemServiceImpl.getBySearch(text);
+        return itemService.getBySearch(text);
     }
 
     @PostMapping("/{itemId}/comment")
     public CommentDto saveComment(@PathVariable Long itemId,
-                                  @RequestHeader(OWNER_ID) Long userId,
+                                  @RequestHeader(USER_ID) Long userId,
                                   @Valid @RequestBody CommentDto commentDto) {
         log.info("save comment {}", commentDto);
-        return itemServiceImpl.saveComment(itemId, userId, commentDto);
+        return itemService.saveComment(itemId, userId, commentDto);
     }
 }

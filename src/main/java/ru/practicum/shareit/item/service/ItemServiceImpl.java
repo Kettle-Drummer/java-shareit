@@ -35,14 +35,16 @@ public class ItemServiceImpl implements ItemService {
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
 
-    public ItemDto add(ItemDto itemDto, Long id) {
+        @Override
+        public ItemDto add(Long id, ItemDto itemDto) {
+        log.debug("saveItem method called in Service to save");
+        User owner = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Нет пользователя с id: " + id));
+        Item item = ItemMapper.INSTANCE.toItem(itemDto);
+        item.setOwner(owner);
 
-        userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Нет пользователя с id: " + id));
-        Item item = ItemMapper.toItem(itemDto);
-        item.setOwner(userRepository.getReferenceById(id));
         item = itemRepository.save(item);
-        log.info("Добавлен новый лот: {} пользователем id:{}", itemDto, id);
-        return ItemMapper.toItemDto(item);
+        return ItemMapper.INSTANCE.toItemDto(item);
     }
 
     public ItemDto update(ItemDto itemDto, Long id, Long itemId) {
@@ -53,10 +55,10 @@ public class ItemServiceImpl implements ItemService {
         if (!existItem.getOwner().getId().equals(existOwner.getId())) {
             throw new EntityNotFoundException("Не совпадает пользователь");
         }
-        Item save = ItemMapper.updateItemByGivenDto(existItem, itemDto);
+        Item save = ItemMapper.INSTANCE.updateItemByGivenDto(itemDto, existItem);
         Item result = itemRepository.save(save);
         log.info("Обновлен лот: {} пользователем id:{}", itemDto, id);
-        return ItemMapper.toItemDto(result);
+        return ItemMapper.INSTANCE.toItemDto(result);
     }
 
     public ItemDto getById(Long id, Long itemId) {
@@ -65,14 +67,14 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new EntityNotFoundException("Нет лота с id: " + itemId));
         List<CommentDto> comments = commentRepository.findByItemId(itemId).stream()
-                .map(CommentMapper::toCommentDto)
+                .map(CommentMapper.INSTANCE::toCommentDto)
                 .collect(Collectors.toList());
         if (Objects.equals(item.getOwner().getId(), user.getId())) {
             ItemDto itemWithBookings = getItemWithBookings(itemId);
             itemWithBookings.setComments(comments);
             return itemWithBookings;
         }
-        ItemDto itemDto = ItemMapper.toItemDto(item);
+        ItemDto itemDto = ItemMapper.INSTANCE.toItemDto(item);
         itemDto.setComments(comments);
         return itemDto;
     }
@@ -96,7 +98,7 @@ public class ItemServiceImpl implements ItemService {
                             (existing, replacement) -> existing
                     ));
             List<CommentDto> comments = commentRepository.findByAuthorId(id).stream()
-                    .map(CommentMapper::toCommentDto)
+                    .map(CommentMapper.INSTANCE::toCommentDto)
                     .collect(Collectors.toList());
             return items.stream()
                     .map(item -> ItemDto.builder()
@@ -111,7 +113,7 @@ public class ItemServiceImpl implements ItemService {
                     .collect(Collectors.toList());
         }
         return itemRepository.findAll().stream()
-                .map(ItemMapper::toItemDto)
+                .map(ItemMapper.INSTANCE::toItemDto)
                 .collect(Collectors.toList());
     }
 
@@ -119,7 +121,7 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDto> getBySearch(String textQuery) {
         return itemRepository.findItemsBySearch(textQuery).stream()
                 .filter(Item::getAvailable)
-                .map(ItemMapper::toItemDto)
+                .map(ItemMapper.INSTANCE::toItemDto)
                 .collect(Collectors.toList());
     }
 
@@ -133,12 +135,12 @@ public class ItemServiceImpl implements ItemService {
         if (finishedBookings.isEmpty()) {
             throw new ValidationException("Бронирование еще не окончено");
         }
-        Comment comment = CommentMapper.toComment(commentDto);
+        Comment comment = CommentMapper.INSTANCE.toComment(commentDto);
         comment.setItem(item);
         comment.setAuthor(user);
         comment.setCreated(LocalDateTime.now());
         Comment savedComment = commentRepository.save(comment);
-        return CommentMapper.toCommentDto(commentRepository.save(savedComment));
+        return CommentMapper.INSTANCE.toCommentDto(savedComment);
     }
 
     private ItemDto getItemWithBookings(Long itemId) {

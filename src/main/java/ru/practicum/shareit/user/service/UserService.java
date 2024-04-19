@@ -13,6 +13,6 @@ public interface UserService {
 
     UserDto update(Long id, UserDto userDto);
 
-    Long delete(Long id);
+    void delete(Long id);
 
 }

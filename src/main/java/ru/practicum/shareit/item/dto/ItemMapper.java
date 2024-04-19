@@ -1,35 +1,26 @@
 package ru.practicum.shareit.item.dto;
 
-import lombok.experimental.UtilityClass;
+import org.mapstruct.Builder;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.factory.Mappers;
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.Optional;
+import java.util.List;
 
-@UtilityClass
-public class ItemMapper {
+@Mapper(componentModel = "spring",
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+        builder = @Builder(disableBuilder = true))
+public interface ItemMapper {
 
-    public static ItemDto toItemDto(Item item) {
-        return ItemDto.builder()
-                .id(item.getId())
-                .name(item.getName())
-                .description(item.getDescription())
-                .available(item.getAvailable())
-                .build();
-    }
+    ItemMapper INSTANCE = Mappers.getMapper(ItemMapper.class);
 
-    public static Item toItem(ItemDto itemDto) {
-        return Item.builder()
-                .id(itemDto.getId())
-                .name(itemDto.getName())
-                .description(itemDto.getDescription())
-                .available(itemDto.getAvailable())
-                .build();
-    }
+    ItemDto toItemDto(Item entity);
 
-    public static Item updateItemByGivenDto(Item item, ItemDto itemDto) {
-        Optional.ofNullable(itemDto.getName()).ifPresent(item::setName);
-        Optional.ofNullable(itemDto.getDescription()).ifPresent(item::setDescription);
-        Optional.ofNullable(itemDto.getAvailable()).ifPresent(item::setAvailable);
-        return item;
-    }
+    Item toItem(ItemDto dto);
+
+    Item updateItemByGivenDto(ItemDto dto, @MappingTarget Item entity);
+
+    List<ItemDto> toItemDtoList(List<Item> source);
 }

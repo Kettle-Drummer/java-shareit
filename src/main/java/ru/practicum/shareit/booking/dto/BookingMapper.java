@@ -1,38 +1,37 @@
 package ru.practicum.shareit.booking.dto;
 
+import org.mapstruct.*;
+import org.mapstruct.factory.Mappers;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class BookingMapper {
-    public static BookingResponseDto toBookingResponseDto(Booking booking) {
-        return BookingResponseDto.builder()
-                .id(booking.getId())
-                .start(booking.getStart())
-                .end(booking.getEnd())
-                .item(booking.getItem())
-                .booker(booking.getBooker())
-                .status(booking.getStatus())
-                .build();
+@Mapper(componentModel = "spring",
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+        builder = @Builder(disableBuilder = true))
+public interface BookingMapper {
+
+    BookingMapper INSTANCE = Mappers.getMapper(BookingMapper.class);
+
+    BookingResponseDto toBookingResponseDto(Booking source);
+
+    @Mappings({
+            @Mapping(target = "id", ignore = true),
+            @Mapping(target = "start", source = "bookingRequestDto.start"),
+            @Mapping(target = "end", source = "bookingRequestDto.end"),
+            @Mapping(target = "item", source = "item"),
+            @Mapping(target = "booker", source = "booker"),
+            @Mapping(target = "status", ignore = true)
+    })
+    Booking toBooking(BookingRequestDto bookingRequestDto, Item item, User booker);
+
+    @AfterMapping
+    default void setStatusToWaiting(@MappingTarget Booking booking) {
+        booking.setStatus(BookingStatus.WAITING);
     }
 
-    public static Booking toBooking(BookingRequestDto bookingRequestDto, Item item, User booker) {
-        return Booking.builder()
-                .start(bookingRequestDto.getStart())
-                .end(bookingRequestDto.getEnd())
-                .item(item)
-                .booker(booker)
-                .status(BookingStatus.WAITING)
-                .build();
-    }
-
-    public static List<BookingResponseDto> toBookingResponseDtoList(List<Booking> bookings) {
-        return bookings.stream()
-                .map(BookingMapper::toBookingResponseDto)
-                .collect(Collectors.toList());
-    }
+    List<BookingResponseDto> toBookingResponseDtoList(List<Booking> source);
 }

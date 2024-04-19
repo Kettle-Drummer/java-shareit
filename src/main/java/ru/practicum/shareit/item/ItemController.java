@@ -46,18 +46,22 @@ public class ItemController {
     }
 
     @GetMapping
-    public Collection<ItemDto> getByUser(@RequestHeader(USER_ID) Long id) {
+    public Collection<ItemDto> getByUser(@RequestParam(defaultValue = "0") int from,
+                                         @RequestParam(defaultValue = "10") int size,
+                                         @RequestHeader(USER_ID) Long id) {
         log.info("Get items by user id{}", id);
-        return itemService.getByUser(id);
+        return itemService.getByUser(id, from, size);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> getBySearch(@RequestParam(required = false) String text) {
+    public List<ItemDto> getBySearch(@RequestParam(defaultValue = "0") int from,
+                                     @RequestParam(defaultValue = "10") int size,
+                                     @RequestParam(required = false) String text) {
         log.info("search {}", text);
         if (text == null || text.trim().isEmpty()) {
             return Collections.emptyList();
         }
-        return itemService.getBySearch(text);
+        return itemService.getBySearch(text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")

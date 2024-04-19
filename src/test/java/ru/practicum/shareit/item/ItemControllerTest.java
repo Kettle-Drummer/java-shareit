@@ -137,7 +137,7 @@ class ItemControllerTest {
                         .available(false)
                         .build()
         );
-        when(itemService.getByUser(1L)).thenReturn(items);
+        when(itemService.getByUser(1L, 0, 10)).thenReturn(items);
 
         mockMvc.perform(get("/items")
                         .header(ItemController.USER_ID, 1L))
@@ -169,7 +169,7 @@ class ItemControllerTest {
                         .available(false)
                         .build()
         );
-        when(itemService.getBySearch("text")).thenReturn(items);
+        when(itemService.getBySearch("text", 0, 10)).thenReturn(items);
 
         mockMvc.perform(get("/items/search")
                         .param("text", "text"))
@@ -187,7 +187,7 @@ class ItemControllerTest {
 
     @Test
     void testSearchByTextWithNoResults() throws Exception {
-        when(itemService.getBySearch("несуществующий текст")).thenReturn(Collections.emptyList());
+        when(itemService.getBySearch("несуществующий текст", 0, 10)).thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/items/search")
                         .param("text", "несуществующий текст"))

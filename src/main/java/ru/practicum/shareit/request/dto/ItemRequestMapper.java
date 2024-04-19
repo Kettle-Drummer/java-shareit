@@ -5,28 +5,7 @@ import org.mapstruct.factory.Mappers;
 import ru.practicum.shareit.request.model.ItemRequest;
 
 import java.time.LocalDateTime;
-
-/*
-@UtilityClass
-public class ItemRequestMapper {
-    public static ItemRequestDto toItemRequestDto(ItemRequest request) {
-        return ItemRequestDto.builder()
-                .id(request.getId())
-                .description(request.getDescription())
-                .created(request.getCreated())
-                .build();
-    }
-
-    public static ItemRequest toItemRequest(ItemRequestDto request, User requester, LocalDateTime created) {
-        return ItemRequest.builder()
-                .description(request.getDescription())
-                .requester(requester)
-                .created(created)
-                .build();
-    }
-}
- */
-
+import java.util.List;
 
 @Mapper(componentModel = "spring",
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
@@ -47,4 +26,6 @@ public interface ItemRequestMapper {
             @Mapping(target = "items", ignore = true)
     })
     ItemRequestDto toItemRequestDto(ItemRequest source);
+
+    List<ItemRequestDto> toItemRequestDtoList(List<ItemRequest> source);
 }

@@ -7,9 +7,9 @@ import java.util.List;
 public interface ItemRequestService {
     ItemRequestDto add(Long requesterId, ItemRequestDto dto);
 
-    ItemRequestDto getById(Long requesterId, Long requestId);
+    ItemRequestDto getByRequestId(Long requesterId, Long requestId);
 
-    List<ItemRequestDto> getByRequesterId(Long requesterId);
+    List<ItemRequestDto> getByUserId(Long userId);
 
-    List<ItemRequestDto> getPaginated(Long requesterId, Integer from, Integer size);
+    List<ItemRequestDto> getAllPaginated(Long requesterId, Integer from, Integer size);
 }

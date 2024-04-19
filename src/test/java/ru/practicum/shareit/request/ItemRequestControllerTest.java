@@ -61,7 +61,7 @@ class ItemRequestControllerTest {
 
     @Test
     void testGetRequestsWhenValidRequestThenReturnListOfItemRequestDto() throws Exception {
-        when(itemRequestService.getByRequesterId(any(Long.class))).thenReturn(List.of(itemRequestDto));
+        when(itemRequestService.getByUserId(any(Long.class))).thenReturn(List.of(itemRequestDto));
 
         mockMvc.perform(get("/requests")
                 .header(ItemRequestController.USER_ID, 2L))
@@ -72,7 +72,7 @@ class ItemRequestControllerTest {
 
     @Test
     void testGetRequestsByPaginationWhenValidRequestThenReturnListOfItemRequestDto() throws Exception {
-        when(itemRequestService.getPaginated(any(Long.class), any(Integer.class), any(Integer.class)))
+        when(itemRequestService.getAllPaginated(any(Long.class), any(Integer.class), any(Integer.class)))
                 .thenReturn(List.of(itemRequestDto));
 
         mockMvc.perform(get("/requests/all")
@@ -86,7 +86,7 @@ class ItemRequestControllerTest {
 
     @Test
     void testGetRequestByIdWhenValidRequestThenReturnItemRequestDto() throws Exception {
-        when(itemRequestService.getById(any(Long.class), any(Long.class))).thenReturn(itemRequestDto);
+        when(itemRequestService.getByRequestId(any(Long.class), any(Long.class))).thenReturn(itemRequestDto);
 
         mockMvc.perform(get("/requests/{requestId}", 1L)
                 .header(ItemRequestController.USER_ID, 2L))

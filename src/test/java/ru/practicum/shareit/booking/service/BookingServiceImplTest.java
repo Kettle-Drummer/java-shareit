@@ -257,23 +257,6 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void testGetBookingByBookerIdWhenAllAndNoPageableConditionsAreMetThenListOfBookingResponseDtoIsReturned() {
-        Long bookerId = 1L;
-        String state = "ALL";
-        Integer from = null;
-        Integer size = null;
-        when(userRepository.findById(eq(bookerId))).thenReturn(Optional.of(booker));
-        when(bookingRepository.findAllByGivenUserId(bookerId)).thenReturn(List.of(booking));
-
-        List<BookingResponseDto> result = bookingService.getByBookerId(bookerId, state, from, size);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(1, result.size());
-        verify(bookingRepository).findAllByGivenUserId(bookerId);
-    }
-
-    @Test
     void testGetBookingByBookerIdWhenCURRENTConditionsAreMetThenListOfBookingResponseDtoIsReturned() {
         Long bookerId = 1L;
         String state = "CURRENT";
@@ -291,23 +274,6 @@ class BookingServiceImplTest {
         assertEquals(bookingResponseDto, result.get(0));
         verify(userRepository).findById(booker.getId());
         verify(bookingRepository).findCurrentBookingsByBookerId(eq(bookerId), any(Pageable.class));
-    }
-
-    @Test
-    void testGetBookingByBookerIdWhenCURRENTAndNoPageableConditionsAreMetThenListOfBookingResponseDtoIsReturned() {
-        Long bookerId = 1L;
-        String state = "CURRENT";
-        Integer from = null;
-        Integer size = null;
-        when(userRepository.findById(eq(bookerId))).thenReturn(Optional.of(booker));
-        when(bookingRepository.findCurrentBookingsByBookerId(bookerId)).thenReturn(List.of(booking));
-
-        List<BookingResponseDto> result = bookingService.getByBookerId(bookerId, state, from, size);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(1, result.size());
-        verify(bookingRepository).findCurrentBookingsByBookerId(bookerId);
     }
 
     @Test
@@ -331,23 +297,6 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void testGetBookingByBookerIdWhenPASTAndNoPageableConditionsAreMetThenListOfBookingResponseDtoIsReturned() {
-        Long bookerId = 1L;
-        String state = "PAST";
-        Integer from = null;
-        Integer size = null;
-        when(userRepository.findById(eq(bookerId))).thenReturn(Optional.of(booker));
-        when(bookingRepository.findPastBookingsByBookerId(bookerId)).thenReturn(List.of(booking));
-
-        List<BookingResponseDto> result = bookingService.getByBookerId(bookerId, state, from, size);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(1, result.size());
-        verify(bookingRepository).findPastBookingsByBookerId(bookerId);
-    }
-
-    @Test
     void testGetBookingByBookerIdWhenFUTUREConditionsAreMetThenListOfBookingResponseDtoIsReturned() {
         Long bookerId = 1L;
         String state = "FUTURE";
@@ -365,23 +314,6 @@ class BookingServiceImplTest {
         assertEquals(bookingResponseDto, result.get(0));
         verify(userRepository).findById(booker.getId());
         verify(bookingRepository).findFutureBookingsByBookerId(eq(bookerId), any(Pageable.class));
-    }
-
-    @Test
-    void testGetBookingByBookerIdWhenFUTUREAndNoPageableConditionsAreMetThenListOfBookingResponseDtoIsReturned() {
-        Long bookerId = 1L;
-        String state = "FUTURE";
-        Integer from = null;
-        Integer size = null;
-        when(userRepository.findById(eq(bookerId))).thenReturn(Optional.of(booker));
-        when(bookingRepository.findFutureBookingsByBookerId(bookerId)).thenReturn(List.of(booking));
-
-        List<BookingResponseDto> result = bookingService.getByBookerId(bookerId, state, from, size);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(1, result.size());
-        verify(bookingRepository).findFutureBookingsByBookerId(bookerId);
     }
 
     @Test
@@ -405,23 +337,6 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void testGetBookingByBookerIdWhenWAITINGAndNoPageableConditionsAreMetThenListOfBookingResponseDtoIsReturned() {
-        Long bookerId = 1L;
-        String state = "WAITING";
-        Integer from = null;
-        Integer size = null;
-        when(userRepository.findById(eq(bookerId))).thenReturn(Optional.of(booker));
-        when(bookingRepository.findWaitingBookingsByBookerId(bookerId)).thenReturn(List.of(booking));
-
-        List<BookingResponseDto> result = bookingService.getByBookerId(bookerId, state, from, size);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(1, result.size());
-        verify(bookingRepository).findWaitingBookingsByBookerId(bookerId);
-    }
-
-    @Test
     void testGetBookingByBookerIdWhenREJECTEDConditionsAreMetThenListOfBookingResponseDtoIsReturned() {
         Long bookerId = 1L;
         String state = "REJECTED";
@@ -441,24 +356,7 @@ class BookingServiceImplTest {
         verify(bookingRepository).findRejectedBookingsByBookerId(eq(bookerId), any(Pageable.class));
     }
 
-    @Test
-    void testGetBookingByBookerIdWhenREJECTEDAndNoPageableConditionsAreMetThenListOfBookingResponseDtoIsReturned() {
-        Long bookerId = 1L;
-        String state = "REJECTED";
-        Integer from = null;
-        Integer size = null;
-        when(userRepository.findById(eq(bookerId))).thenReturn(Optional.of(booker));
-        when(bookingRepository.findRejectedBookingsByBookerId(bookerId)).thenReturn(List.of(booking));
-
-        List<BookingResponseDto> result = bookingService.getByBookerId(bookerId, state, from, size);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(1, result.size());
-        verify(bookingRepository).findRejectedBookingsByBookerId(bookerId);
-    }
-
-    @Test
+     @Test
     void testGetBookingByBookerIdWhenUnknownStateThenThrowException() {
         Long bookerId = 1L;
         String state = "UNKNOWN_STATE";
@@ -467,7 +365,7 @@ class BookingServiceImplTest {
 
         when(userRepository.findById(bookerId)).thenReturn(Optional.of(booker));
 
-        assertThrows(IllegalStateException.class, () -> bookingService.getByBookerId(bookerId, state, from, size));
+        assertThrows(ValidationException.class, () -> bookingService.getByBookerId(bookerId, state, from, size));
     }
 
     @Test
@@ -492,25 +390,6 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void testGetBookingByOwnerIdWhenAllAndNoPageableConditionsAreMetThenListOfBookingResponseDtoIsReturned() {
-        Long ownerId = 2L;
-        String state = "ALL";
-        Integer from = null;
-        Integer size = null;
-
-        when(userRepository.findById(ownerId)).thenReturn(Optional.of(owner));
-        when(bookingRepository.findAllBookingsByOwnerId(eq(ownerId))).thenReturn(List.of(booking));
-
-        List<BookingResponseDto> result = bookingService.getByOwnerId(ownerId, state, from, size);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(bookingResponseDto, result.get(0));
-        verify(userRepository).findById(owner.getId());
-        verify(bookingRepository).findAllBookingsByOwnerId(eq(owner.getId()));
-    }
-
-    @Test
     void testGetBookingByOwnerIdWhenCURRENTConditionsAreMetThenListOfBookingResponseDtoIsReturned() {
         Long ownerId = 2L;
         String state = "CURRENT";
@@ -529,25 +408,6 @@ class BookingServiceImplTest {
         assertEquals(bookingResponseDto, result.get(0));
         verify(userRepository).findById(owner.getId());
         verify(bookingRepository).findCurrentBookingsByOwnerId(eq(owner.getId()), any(Pageable.class));
-    }
-
-    @Test
-    void testGetBookingByOwnerIdWhenCURRENTAndNoPageableConditionsAreMetThenListOfBookingResponseDtoIsReturned() {
-        Long ownerId = 2L;
-        String state = "CURRENT";
-        Integer from = null;
-        Integer size = null;
-
-        when(userRepository.findById(ownerId)).thenReturn(Optional.of(owner));
-        when(bookingRepository.findCurrentBookingsByOwnerId(eq(ownerId))).thenReturn(List.of(booking));
-
-        List<BookingResponseDto> result = bookingService.getByOwnerId(ownerId, state, from, size);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(bookingResponseDto, result.get(0));
-        verify(userRepository).findById(owner.getId());
-        verify(bookingRepository).findCurrentBookingsByOwnerId(eq(owner.getId()));
     }
 
     @Test
@@ -570,26 +430,6 @@ class BookingServiceImplTest {
         verify(userRepository).findById(owner.getId());
         verify(bookingRepository).findPastBookingsByOwnerId(eq(owner.getId()), any(Pageable.class));
     }
-
-    @Test
-    void testGetBookingByOwnerIdWhenPASTAndNoPageableConditionsAreMetThenListOfBookingResponseDtoIsReturned() {
-        Long ownerId = 2L;
-        String state = "PAST";
-        Integer from = null;
-        Integer size = null;
-
-        when(userRepository.findById(ownerId)).thenReturn(Optional.of(owner));
-        when(bookingRepository.findPastBookingsByOwnerId(eq(ownerId))).thenReturn(List.of(booking));
-
-        List<BookingResponseDto> result = bookingService.getByOwnerId(ownerId, state, from, size);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(bookingResponseDto, result.get(0));
-        verify(userRepository).findById(owner.getId());
-        verify(bookingRepository).findPastBookingsByOwnerId(eq(owner.getId()));
-    }
-
     @Test
     void testGetBookingByOwnerIdWhenFUTUREConditionsAreMetThenListOfBookingResponseDtoIsReturned() {
         Long ownerId = 2L;
@@ -610,26 +450,6 @@ class BookingServiceImplTest {
         verify(userRepository).findById(owner.getId());
         verify(bookingRepository).findFutureBookingsByOwnerId(eq(owner.getId()), any(Pageable.class));
     }
-
-    @Test
-    void testGetBookingByOwnerIdWhenFUTUREAndNoPageableConditionsAreMetThenListOfBookingResponseDtoIsReturned() {
-        Long ownerId = 2L;
-        String state = "FUTURE";
-        Integer from = null;
-        Integer size = null;
-
-        when(userRepository.findById(ownerId)).thenReturn(Optional.of(owner));
-        when(bookingRepository.findFutureBookingsByOwnerId(eq(ownerId))).thenReturn(List.of(booking));
-
-        List<BookingResponseDto> result = bookingService.getByOwnerId(ownerId, state, from, size);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(bookingResponseDto, result.get(0));
-        verify(userRepository).findById(owner.getId());
-        verify(bookingRepository).findFutureBookingsByOwnerId(eq(owner.getId()));
-    }
-
     @Test
     void testGetBookingByOwnerIdWhenWAITINGConditionsAreMetThenListOfBookingResponseDtoIsReturned() {
         Long ownerId = 2L;
@@ -650,26 +470,6 @@ class BookingServiceImplTest {
         verify(userRepository).findById(owner.getId());
         verify(bookingRepository).findWaitingBookingsByOwnerId(eq(owner.getId()), any(Pageable.class));
     }
-
-    @Test
-    void testGetBookingByOwnerIdWhenWAITINGAndNoPageableConditionsAreMetThenListOfBookingResponseDtoIsReturned() {
-        Long ownerId = 2L;
-        String state = "WAITING";
-        Integer from = null;
-        Integer size = null;
-
-        when(userRepository.findById(ownerId)).thenReturn(Optional.of(owner));
-        when(bookingRepository.findWaitingBookingsByOwnerId(eq(ownerId))).thenReturn(List.of(booking));
-
-        List<BookingResponseDto> result = bookingService.getByOwnerId(ownerId, state, from, size);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(bookingResponseDto, result.get(0));
-        verify(userRepository).findById(owner.getId());
-        verify(bookingRepository).findWaitingBookingsByOwnerId(eq(owner.getId()));
-    }
-
     @Test
     void testGetBookingByOwnerIdWhenREJECTEDConditionsAreMetThenListOfBookingResponseDtoIsReturned() {
         Long ownerId = 2L;
@@ -690,26 +490,6 @@ class BookingServiceImplTest {
         verify(userRepository).findById(owner.getId());
         verify(bookingRepository).findRejectedBookingsByOwnerId(eq(owner.getId()), any(Pageable.class));
     }
-
-    @Test
-    void testGetBookingByOwnerIdWhenREJECTEDAndNoPageableConditionsAreMetThenListOfBookingResponseDtoIsReturned() {
-        Long ownerId = 2L;
-        String state = "REJECTED";
-        Integer from = null;
-        Integer size = null;
-
-        when(userRepository.findById(ownerId)).thenReturn(Optional.of(owner));
-        when(bookingRepository.findRejectedBookingsByOwnerId(eq(ownerId))).thenReturn(List.of(booking));
-
-        List<BookingResponseDto> result = bookingService.getByOwnerId(ownerId, state, from, size);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(bookingResponseDto, result.get(0));
-        verify(userRepository).findById(owner.getId());
-        verify(bookingRepository).findRejectedBookingsByOwnerId(eq(owner.getId()));
-    }
-
     @Test
     void testGetBookingByOwnerIdWhenUnknownStateThenThrowException() {
         Long ownerId = 2L;
@@ -719,6 +499,6 @@ class BookingServiceImplTest {
 
         when(userRepository.findById(ownerId)).thenReturn(Optional.of(owner));
 
-        assertThrows(IllegalStateException.class, () -> bookingService.getByOwnerId(ownerId, state, from, size));
+        assertThrows(ValidationException.class, () -> bookingService.getByOwnerId(ownerId, state, from, size));
     }
 }

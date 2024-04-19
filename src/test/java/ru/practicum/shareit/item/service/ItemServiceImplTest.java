@@ -8,6 +8,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.error.EntityNotFoundException;
@@ -19,6 +23,7 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.CommentRepository;
 import ru.practicum.shareit.item.storage.ItemRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
@@ -173,38 +178,39 @@ class ItemServiceImplTest {
     @Test
     void testGetAllItemsWhenAllDependenciesAvailableThenAllItemsRetrieved() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-        when(itemRepository.findItemsByOwnerId(anyLong())).thenReturn(Collections.singletonList(item));
+        when(itemRepository.findItemsByOwnerId(anyLong(), any(PageRequest.class))).thenReturn(Collections.singletonList(item));
         when(bookingRepository.findLastBookingsForOwnerItems(anyLong())).thenReturn(Collections.singletonList(booking));
         when(bookingRepository.findNextBookingsForOwnerItems(anyLong())).thenReturn(Collections.singletonList(booking));
         when(commentRepository.findByAuthorId(anyLong())).thenReturn(Collections.singletonList(comment));
 
-        List<ItemDto> result = itemService.getByUser(user.getId());
+        List<ItemDto> result = itemService.getByUser(user.getId(), 0, 10);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         assertEquals(1, result.size());
-        verify(itemRepository, times(1)).findItemsByOwnerId(anyLong());
+        verify(itemRepository, times(1)).findItemsByOwnerId(anyLong(), any(PageRequest.class));
     }
 
     @Test
     void testGetAllItemsWithWrongId() {
-        when(itemService.getByUser(null)).thenReturn(new ArrayList<>());
+        when(itemService.getByUser(100L, 0, 10)).thenReturn(new ArrayList<>());
 
-        List<ItemDto> result = itemService.getByUser(null);
+        List<ItemDto> result = itemService.getByUser(100L, 0, 10);
 
         assertEquals(result, new ArrayList<>());
     }
 
     @Test
     void testSearchByTextWhenAllDependenciesAvailableThenItemsSearched() {
-        when(itemRepository.findItemsBySearch(anyString())).thenReturn(Collections.singletonList(item));
+        Page<Item> page = new PageImpl<>(List.of(item));
+        when(itemRepository.findItemsBySearch(anyString(), any(PageRequest.class))).thenReturn(page);
 
-        List<ItemDto> result = itemService.getBySearch("Item");
+        List<ItemDto> result = itemService.getBySearch("Item",0, 10);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         assertEquals(1, result.size());
-        verify(itemRepository, times(1)).findItemsBySearch(anyString());
+        verify(itemRepository, times(1)).findItemsBySearch(anyString(), any(PageRequest.class));
     }
 
     @Test

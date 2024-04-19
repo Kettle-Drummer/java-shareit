@@ -41,25 +41,25 @@ public class BookingController {
 
     @GetMapping("/{bookingId}")
     public BookingResponseDto getByBookingId(@RequestHeader(USER_ID) Long id,
-                                                    @PathVariable Long bookingId) {
+                                             @PathVariable Long bookingId) {
         log.info("get booking by id={}", id);
         return service.getByBookingId(id, bookingId);
     }
 
     @GetMapping
     public List<BookingResponseDto> getByBookerId(@RequestHeader(USER_ID) Long bookerId,
-                                                  @RequestParam(required = false, defaultValue = "ALL") String state,
-                                                  @RequestParam(required = false) @PositiveOrZero Integer from,
-                                                  @RequestParam(required = false) @Positive Integer size) {
+                                                  @RequestParam(defaultValue = "0") int from,
+                                                  @RequestParam(defaultValue = "10") int size,
+                                                  @RequestParam(defaultValue = "ALL") String state) {
         log.info("get booking by booker id={}", bookerId);
         return service.getByBookerId(bookerId, state, from, size);
     }
 
     @GetMapping("/owner")
     public List<BookingResponseDto> getByOwnerId(@RequestHeader(USER_ID) Long ownerId,
-                                                 @RequestParam(required = false, defaultValue = "ALL") String state,
-                                                 @RequestParam(required = false) @PositiveOrZero Integer from,
-                                                 @RequestParam(required = false) @Positive Integer size) {
+                                                 @RequestParam(defaultValue = "0") int from,
+                                                 @RequestParam(defaultValue = "10") int size,
+                                                 @RequestParam(defaultValue = "ALL") String state) {
         log.info("get booking by owner id={}", ownerId);
         return service.getByOwnerId(ownerId, state, from, size);
     }

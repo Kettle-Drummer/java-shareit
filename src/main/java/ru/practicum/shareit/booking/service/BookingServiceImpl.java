@@ -19,6 +19,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -83,58 +84,35 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingResponseDto> getByBookerId(Long bookerId, String state, Integer from, Integer size) {
         findUserById(bookerId);
-        BookingState fromState = null;
-        boolean isStateValid = true;
+        checkPageableParameters(from, size);
+
+        BookingState fromState;
         try {
             fromState = BookingState.valueOf(state);
         } catch (RuntimeException e) {
-            isStateValid = false;
+            throw new ValidationException("Unknown state: " + state);
         }
-        if (isStateValid) {
-            if (from != null && size != null) {
-                Pageable pageable = PageRequest.of(from / size, size);
-                switch (fromState) {
-                    case ALL:
-                        return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
-                                .findAllByGivenUserId(bookerId, pageable).getContent());
-                    case CURRENT:
-                        return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
-                                .findCurrentBookingsByBookerId(bookerId, pageable).getContent());
-                    case PAST:
-                        return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
-                                .findPastBookingsByBookerId(bookerId, pageable).getContent());
-                    case FUTURE:
-                        return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
-                                .findFutureBookingsByBookerId(bookerId, pageable).getContent());
-                    case WAITING:
-                        return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
-                                .findWaitingBookingsByBookerId(bookerId, pageable).getContent());
-                    case REJECTED:
-                        return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
-                                .findRejectedBookingsByBookerId(bookerId, pageable).getContent());
-                }
-            } else {
-                switch (fromState) {
-                    case ALL:
-                        return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
-                                .findAllByGivenUserId(bookerId));
-                    case CURRENT:
-                        return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
-                                .findCurrentBookingsByBookerId(bookerId));
-                    case PAST:
-                        return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
-                                .findPastBookingsByBookerId(bookerId));
-                    case FUTURE:
-                        return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
-                                .findFutureBookingsByBookerId(bookerId));
-                    case WAITING:
-                        return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
-                                .findWaitingBookingsByBookerId(bookerId));
-                    case REJECTED:
-                        return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
-                                .findRejectedBookingsByBookerId(bookerId));
-                }
-            }
+
+        Pageable pageable = PageRequest.of(from / size, size);
+        switch (fromState) {
+            case ALL:
+                return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
+                        .findAllByGivenUserId(bookerId, pageable).getContent());
+            case CURRENT:
+                return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
+                        .findCurrentBookingsByBookerId(bookerId, pageable).getContent());
+            case PAST:
+                return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
+                        .findPastBookingsByBookerId(bookerId, pageable).getContent());
+            case FUTURE:
+                return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
+                        .findFutureBookingsByBookerId(bookerId, pageable).getContent());
+            case WAITING:
+                return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
+                        .findWaitingBookingsByBookerId(bookerId, pageable).getContent());
+            case REJECTED:
+                return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
+                        .findRejectedBookingsByBookerId(bookerId, pageable).getContent());
         }
         throw new IllegalStateException("Unknown state: " + state);
     }
@@ -142,58 +120,35 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingResponseDto> getByOwnerId(Long ownerId, String state, Integer from, Integer size) {
         findUserById(ownerId);
-        BookingState fromState = null;
-        boolean isStateValid = true;
+        checkPageableParameters(from, size);
+
+        BookingState fromState;
         try {
             fromState = BookingState.valueOf(state);
         } catch (RuntimeException e) {
-            isStateValid = false;
+            throw new ValidationException("Unknown state: " + state);
         }
-        if (isStateValid) {
-            if (from != null && size != null) {
-                Pageable pageable = PageRequest.of(from / size, size);
-                switch (fromState) {
-                    case ALL:
-                        return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
-                                .findAllBookingsByOwnerId(ownerId, pageable).getContent());
-                    case CURRENT:
-                        return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
-                                .findCurrentBookingsByOwnerId(ownerId, pageable).getContent());
-                    case PAST:
-                        return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
-                                .findPastBookingsByOwnerId(ownerId, pageable).getContent());
-                    case FUTURE:
-                        return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
-                                .findFutureBookingsByOwnerId(ownerId, pageable).getContent());
-                    case WAITING:
-                        return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
-                                .findWaitingBookingsByOwnerId(ownerId, pageable).getContent());
-                    case REJECTED:
-                        return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
-                                .findRejectedBookingsByOwnerId(ownerId, pageable).getContent());
-                }
-            } else {
-                switch (fromState) {
-                    case ALL:
-                        return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
-                                .findAllBookingsByOwnerId(ownerId));
-                    case CURRENT:
-                        return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
-                                .findCurrentBookingsByOwnerId(ownerId));
-                    case PAST:
-                        return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
-                                .findPastBookingsByOwnerId(ownerId));
-                    case FUTURE:
-                        return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
-                                .findFutureBookingsByOwnerId(ownerId));
-                    case WAITING:
-                        return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
-                                .findWaitingBookingsByOwnerId(ownerId));
-                    case REJECTED:
-                        return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
-                                .findRejectedBookingsByOwnerId(ownerId));
-                }
-            }
+
+        Pageable pageable = PageRequest.of(from / size, size);
+        switch (fromState) {
+            case ALL:
+                return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
+                        .findAllBookingsByOwnerId(ownerId, pageable).getContent());
+            case CURRENT:
+                return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
+                        .findCurrentBookingsByOwnerId(ownerId, pageable).getContent());
+            case PAST:
+                return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
+                        .findPastBookingsByOwnerId(ownerId, pageable).getContent());
+            case FUTURE:
+                return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
+                        .findFutureBookingsByOwnerId(ownerId, pageable).getContent());
+            case WAITING:
+                return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
+                        .findWaitingBookingsByOwnerId(ownerId, pageable).getContent());
+            case REJECTED:
+                return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
+                        .findRejectedBookingsByOwnerId(ownerId, pageable).getContent());
         }
         throw new IllegalStateException("Unknown state: " + state);
     }
@@ -213,5 +168,15 @@ public class BookingServiceImpl implements BookingService {
     private User findUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow((() -> new EntityNotFoundException("Нет пользователя с id: " + userId)));
+    }
+
+    private void checkPageableParameters(int from, int size) {
+        if (from < 0) {
+            throw new ValidationException("Не верно указано значение первого элемента страницы. " +
+                    "Переданное значение: " + from);
+        }
+        if (size <= 0) {
+            throw new ValidationException("Не верно указано значение размера страницы. Переданное значение: " + size);
+        }
     }
 }

@@ -22,6 +22,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -74,7 +75,7 @@ class ItemRequestServiceImplTest {
         when(userRepository.findById(any(Long.class))).thenReturn(java.util.Optional.of(user));
         when(requestRepository.findItemRequestsByRequesterId(any(Long.class))).thenReturn(List.of(itemRequest));
 
-        List<ItemRequestDto> result = itemRequestService.getByRequesterId(1L);
+        List<ItemRequestDto> result = itemRequestService.getByUserId(1L);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -87,22 +88,23 @@ class ItemRequestServiceImplTest {
     void getRequestByPaginationShouldReturnListOfRequests() {
         Page<ItemRequest> page = new PageImpl<>(List.of(itemRequest));
         when(userRepository.findById(any(Long.class))).thenReturn(java.util.Optional.of(user));
-        when(requestRepository.findItemRequestsByRequesterId(any(Long.class), any(PageRequest.class))).thenReturn(page);
+        when(requestRepository.findAllWithoutRequesterId(any(Long.class), any(PageRequest.class))).thenReturn(page);
 
-        List<ItemRequestDto> result = itemRequestService.getPaginated(1L, 0, 1);
+        List<ItemRequestDto> result = itemRequestService.getAllPaginated(1L, 0, 1);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         assertEquals(1, result.size());
         verify(userRepository, times(1)).findById(any(Long.class));
-        verify(requestRepository, times(1)).findItemRequestsByRequesterId(any(Long.class), any(PageRequest.class));
+        verify(requestRepository, times(1)).findAllWithoutRequesterId(any(Long.class), any(PageRequest.class));
     }
 
     @Test
     void getRequestByPaginationShouldReturnGetRequestsResult() {
-        when(requestRepository.findItemRequestsByRequesterId(any(Long.class), any())).thenReturn(null);
+        Page<ItemRequest> page = new PageImpl<>(List.of());
+        when(requestRepository.findAllWithoutRequesterId(any(Long.class), any())).thenReturn(page);
 
-        List<ItemRequestDto> result = itemRequestService.getPaginated(1L, null, null);
+        List<ItemRequestDto> result = itemRequestService.getAllPaginated(1L, 0, 10);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -113,7 +115,7 @@ class ItemRequestServiceImplTest {
         when(userRepository.findById(any(Long.class))).thenReturn(java.util.Optional.of(user));
         when(requestRepository.findById(any(Long.class))).thenReturn(java.util.Optional.of(itemRequest));
 
-        ItemRequestDto result = itemRequestService.getById(1L, 1L);
+        ItemRequestDto result = itemRequestService.getByRequestId(1L, 1L);
 
         assertNotNull(result);
         assertEquals(itemRequestDto.getDescription(), result.getDescription());
@@ -126,7 +128,7 @@ class ItemRequestServiceImplTest {
         when(userRepository.findById(any(Long.class))).thenReturn(java.util.Optional.of(user));
         when(requestRepository.findById(any(Long.class))).thenReturn(java.util.Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> itemRequestService.getById(1L, 1L));
+        assertThrows(EntityNotFoundException.class, () -> itemRequestService.getByRequestId(1L, 1L));
 
         verify(userRepository, times(1)).findById(any(Long.class));
         verify(requestRepository, times(1)).findById(any(Long.class));

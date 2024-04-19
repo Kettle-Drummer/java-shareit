@@ -29,9 +29,4 @@ public class ItemRequest {
 
     @Column(name = "created")
     private LocalDateTime created;
-
-    public ItemRequest(String description, LocalDateTime created) {
-        this.description = description;
-        this.created = created;
-    }
 }

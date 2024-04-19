@@ -95,6 +95,7 @@ class ItemServiceImplTest {
     void testPageableParametersFromShouldThrowException() {
         assertThrows(ValidationException.class, () -> itemService.getBySearch("test", -10, 10));
     }
+
     @Test
     void testPageableParametersSizeShouldThrowException() {
         assertThrows(ValidationException.class, () -> itemService.getBySearch("test", 0, -20));

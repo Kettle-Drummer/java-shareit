@@ -430,6 +430,7 @@ class BookingServiceImplTest {
         verify(userRepository).findById(owner.getId());
         verify(bookingRepository).findPastBookingsByOwnerId(eq(owner.getId()), any(Pageable.class));
     }
+
     @Test
     void testGetBookingByOwnerIdWhenFUTUREConditionsAreMetThenListOfBookingResponseDtoIsReturned() {
         Long ownerId = 2L;
@@ -450,6 +451,7 @@ class BookingServiceImplTest {
         verify(userRepository).findById(owner.getId());
         verify(bookingRepository).findFutureBookingsByOwnerId(eq(owner.getId()), any(Pageable.class));
     }
+
     @Test
     void testGetBookingByOwnerIdWhenWAITINGConditionsAreMetThenListOfBookingResponseDtoIsReturned() {
         Long ownerId = 2L;
@@ -470,6 +472,7 @@ class BookingServiceImplTest {
         verify(userRepository).findById(owner.getId());
         verify(bookingRepository).findWaitingBookingsByOwnerId(eq(owner.getId()), any(Pageable.class));
     }
+
     @Test
     void testGetBookingByOwnerIdWhenREJECTEDConditionsAreMetThenListOfBookingResponseDtoIsReturned() {
         Long ownerId = 2L;
@@ -490,6 +493,7 @@ class BookingServiceImplTest {
         verify(userRepository).findById(owner.getId());
         verify(bookingRepository).findRejectedBookingsByOwnerId(eq(owner.getId()), any(Pageable.class));
     }
+
     @Test
     void testGetBookingByOwnerIdWhenUnknownStateThenThrowException() {
         Long ownerId = 2L;

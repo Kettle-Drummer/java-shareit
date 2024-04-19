@@ -5,8 +5,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.factory.Mappers;
-import ru.practicum.shareit.booking.dto.BookingResponseDto;
-import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
@@ -23,5 +21,6 @@ public interface ItemMapper {
     Item toItem(ItemDto dto);
 
     Item updateItemByGivenDto(ItemDto dto, @MappingTarget Item entity);
+
     List<ItemDto> toItemDtoList(List<Item> source);
 }

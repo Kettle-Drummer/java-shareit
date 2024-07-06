@@ -9,6 +9,8 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -24,7 +26,7 @@ public class ItemController {
 
     @PostMapping
     public ItemDto add(@RequestHeader(USER_ID) Long id,
-                            @Validated @RequestBody ItemDto itemDto) {
+                       @RequestBody ItemDto itemDto) {
         log.info("POST request received to save item");
         return itemService.add(id, itemDto);
     }
@@ -54,9 +56,9 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDto> getBySearch(@RequestParam(defaultValue = "0") int from,
-                                     @RequestParam(defaultValue = "10") int size,
-                                     @RequestParam(required = false) String text) {
+    public List<ItemDto> getBySearch(@RequestParam(defaultValue = "") String text,
+                                     @PositiveOrZero @RequestParam(defaultValue = "0") int from,
+                                     @Positive @RequestParam(defaultValue = "10") int size) {
         log.info("search {}", text);
         if (text == null || text.trim().isEmpty()) {
             return Collections.emptyList();

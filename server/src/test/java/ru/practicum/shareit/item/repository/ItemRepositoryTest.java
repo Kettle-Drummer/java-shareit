@@ -58,7 +58,7 @@ public class ItemRepositoryTest {
 
     @Test
     void whenFindByOwnerId_thenReturnItems() {
-        List<Item> foundItems = itemRepository.findItemsByOwnerId(user.getId());
+        List<Item> foundItems = itemRepository.findItemsByOwnerIdOrderById(user.getId());
 
         assertThat(foundItems).hasSize(2);
         assertThat(foundItems.get(0).getOwner()).isEqualTo(user);

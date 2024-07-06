@@ -1,3 +1,4 @@
 FROM amazoncorretto:11-alpine-jdk
-COPY target/*.jar server.jar
+ENV JAVA_TOOL_OPTIONS -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8085
+COPY target/*.jar gateway.jar
 ENTRYPOINT ["java","-jar","/server.jar"]

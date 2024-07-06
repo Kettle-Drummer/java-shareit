@@ -49,6 +49,7 @@ public class ItemServiceImpl implements ItemService {
         return ItemMapper.INSTANCE.toItemDto(item);
     }
 
+    @Override
     public ItemDto update(ItemDto itemDto, Long id, Long itemId) {
         User existOwner = findUserById(id);
         Item existItem = findItemById(itemId);
@@ -61,6 +62,7 @@ public class ItemServiceImpl implements ItemService {
         return ItemMapper.INSTANCE.toItemDto(result);
     }
 
+    @Override
     public ItemDto getById(Long id, Long itemId) {
         User user = findUserById(id);
         Item item = findItemById(itemId);
@@ -77,11 +79,11 @@ public class ItemServiceImpl implements ItemService {
         return itemDto;
     }
 
-
+    @Override
     public List<ItemDto> getByUser(Long id, int from, int size) {
         checkPageableParameters(from, size);
         Pageable pageable = PageRequest.of(from / size, size);
-        List<Item> items = itemRepository.findItemsByOwnerId(id, pageable);
+        List<Item> items = itemRepository.findItemsByOwnerIdOrderById(id, pageable);
         if (items.isEmpty()) {
             return new ArrayList<>();
         }
@@ -119,7 +121,7 @@ public class ItemServiceImpl implements ItemService {
                 .findAll(pageable).getContent());
     }
 
-
+    @Override
     public List<ItemDto> getBySearch(String textQuery, int from, int size) {
         checkPageableParameters(from, size);
         Pageable pageable = PageRequest.of(from / size, size);
@@ -143,6 +145,7 @@ public class ItemServiceImpl implements ItemService {
         Comment savedComment = commentRepository.save(comment);
         return CommentMapper.INSTANCE.toCommentDto(savedComment);
     }
+
 
     private ItemDto getItemWithBookings(Long itemId) {
         Item item = findItemById(itemId);

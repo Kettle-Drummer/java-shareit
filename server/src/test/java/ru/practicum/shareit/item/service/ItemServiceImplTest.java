@@ -186,7 +186,7 @@ class ItemServiceImplTest {
     @Test
     void testGetAllItemsWhenAllDependenciesAvailableThenAllItemsRetrieved() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-        when(itemRepository.findItemsByOwnerId(anyLong(), any(PageRequest.class))).thenReturn(Collections.singletonList(item));
+        when(itemRepository.findItemsByOwnerIdOrderById(anyLong(), any(PageRequest.class))).thenReturn(Collections.singletonList(item));
         when(bookingRepository.findLastBookingsForOwnerItems(anyLong())).thenReturn(Collections.singletonList(booking));
         when(bookingRepository.findNextBookingsForOwnerItems(anyLong())).thenReturn(Collections.singletonList(booking));
         when(commentRepository.findByAuthorId(anyLong())).thenReturn(Collections.singletonList(comment));
@@ -196,7 +196,7 @@ class ItemServiceImplTest {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         assertEquals(1, result.size());
-        verify(itemRepository, times(1)).findItemsByOwnerId(anyLong(), any(PageRequest.class));
+        verify(itemRepository, times(1)).findItemsByOwnerIdOrderById(anyLong(), any(PageRequest.class));
     }
 
     @Test

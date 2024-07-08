@@ -32,7 +32,6 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingResponseDto save(Long bookerId, BookingRequestDto requestDto) {
-        bookingTimeValidation(requestDto);
         User booker = findUserById(bookerId);
         Item item = itemRepository.findById(requestDto.getItemId())
                 .orElseThrow((() -> new EntityNotFoundException("Нет лота с id: " + requestDto.getItemId())));
@@ -83,17 +82,9 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingResponseDto> getByBookerId(Long bookerId, String state, Integer from, Integer size) {
         findUserById(bookerId);
-        checkPageableParameters(from, size);
-
-        BookingState fromState;
-        try {
-            fromState = BookingState.valueOf(state);
-        } catch (RuntimeException e) {
-            throw new ValidationException("Unknown state: " + state);
-        }
 
         Pageable pageable = PageRequest.of(from / size, size);
-        switch (fromState) {
+        switch (BookingState.valueOf(state)) {
             case ALL:
                 return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
                         .findAllByGivenUserId(bookerId, pageable).getContent());
@@ -119,17 +110,9 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingResponseDto> getByOwnerId(Long ownerId, String state, Integer from, Integer size) {
         findUserById(ownerId);
-        checkPageableParameters(from, size);
-
-        BookingState fromState;
-        try {
-            fromState = BookingState.valueOf(state);
-        } catch (RuntimeException e) {
-            throw new ValidationException("Unknown state: " + state);
-        }
 
         Pageable pageable = PageRequest.of(from / size, size);
-        switch (fromState) {
+        switch (BookingState.valueOf(state)) {
             case ALL:
                 return BookingMapper.INSTANCE.toBookingResponseDtoList(bookingRepository
                         .findAllBookingsByOwnerId(ownerId, pageable).getContent());
@@ -152,30 +135,8 @@ public class BookingServiceImpl implements BookingService {
         throw new IllegalStateException("Unknown state: " + state);
     }
 
-    private void bookingTimeValidation(BookingRequestDto requestDto) {
-        if (requestDto.getStart().isBefore(LocalDateTime.now())) {
-            throw new ValidationException("Бронь должна начинаться в будущем");
-        }
-        if (requestDto.getStart().equals(requestDto.getEnd())) {
-            throw new ValidationException("Бронь не должна заканчиваться мгновенно");
-        }
-        if (requestDto.getStart().isAfter(requestDto.getEnd())) {
-            throw new ValidationException("Бронь должна начинаться раньше, чем заканчивается");
-        }
-    }
-
     private User findUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow((() -> new EntityNotFoundException("Нет пользователя с id: " + userId)));
-    }
-
-    private void checkPageableParameters(int from, int size) {
-        if (from < 0) {
-            throw new ValidationException("Не верно указано значение первого элемента страницы. " +
-                    "Переданное значение: " + from);
-        }
-        if (size <= 0) {
-            throw new ValidationException("Не верно указано значение размера страницы. Переданное значение: " + size);
-        }
     }
 }

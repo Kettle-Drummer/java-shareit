@@ -81,7 +81,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> getByUser(Long id, int from, int size) {
-        checkPageableParameters(from, size);
         Pageable pageable = PageRequest.of(from / size, size);
         List<Item> items = itemRepository.findItemsByOwnerIdOrderById(id, pageable);
         if (items.isEmpty()) {
@@ -123,7 +122,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> getBySearch(String textQuery, int from, int size) {
-        checkPageableParameters(from, size);
         Pageable pageable = PageRequest.of(from / size, size);
 
         return ItemMapper.INSTANCE.toItemDtoList(itemRepository
@@ -179,16 +177,6 @@ public class ItemServiceImpl implements ItemService {
 
     private BookingItemDto toBookingItemDto(Booking booking) {
         return new BookingItemDto(booking.getId(), booking.getBooker().getId());
-    }
-
-    private void checkPageableParameters(int from, int size) {
-        if (from < 0) {
-            throw new ValidationException("Не верно указано значение первого элемента страницы. " +
-                    "Переданное значение: " + from);
-        }
-        if (size <= 0) {
-            throw new ValidationException("Не верно указано значение размера страницы. Переданное значение: " + size);
-        }
     }
 
     private User findUserById(Long userId) {

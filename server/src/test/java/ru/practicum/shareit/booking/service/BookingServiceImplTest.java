@@ -356,18 +356,6 @@ class BookingServiceImplTest {
         verify(bookingRepository).findRejectedBookingsByBookerId(eq(bookerId), any(Pageable.class));
     }
 
-     @Test
-    void testGetBookingByBookerIdWhenUnknownStateThenThrowException() {
-        Long bookerId = 1L;
-        String state = "UNKNOWN_STATE";
-        Integer from = 0;
-        Integer size = 10;
-
-        when(userRepository.findById(bookerId)).thenReturn(Optional.of(booker));
-
-        assertThrows(ValidationException.class, () -> bookingService.getByBookerId(bookerId, state, from, size));
-    }
-
     @Test
     void testGetBookingByOwnerIdWhenAllConditionsAreMetThenListOfBookingResponseDtoIsReturned() {
         Long ownerId = 2L;
@@ -494,15 +482,4 @@ class BookingServiceImplTest {
         verify(bookingRepository).findRejectedBookingsByOwnerId(eq(owner.getId()), any(Pageable.class));
     }
 
-    @Test
-    void testGetBookingByOwnerIdWhenUnknownStateThenThrowException() {
-        Long ownerId = 2L;
-        String state = "UNKNOWN_STATE";
-        Integer from = 0;
-        Integer size = 10;
-
-        when(userRepository.findById(ownerId)).thenReturn(Optional.of(owner));
-
-        assertThrows(ValidationException.class, () -> bookingService.getByOwnerId(ownerId, state, from, size));
-    }
 }

@@ -62,7 +62,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     public List<ItemRequestDto> getAllPaginated(Long requesterId, Integer from, Integer size) {
         log.debug("getRequestByPagination method was called in ItemRequestServiceIml");
         findUserById(requesterId);
-        checkPageableParameters(from, size);
         Pageable pageable = PageRequest.of(from / size, size);
 
         List<ItemRequest> itemRequests = requestRepository.findAllWithoutRequesterId(requesterId, pageable).getContent();
@@ -106,15 +105,5 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     private User findUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow((() -> new EntityNotFoundException("Нет пользователя с id: " + userId)));
-    }
-
-    private void checkPageableParameters(int from, int size) {
-        if (from < 0) {
-            throw new ValidationException("Не верно указано значение первого элемента страницы. " +
-                    "Переданное значение: " + from);
-        }
-        if (size <= 0) {
-            throw new ValidationException("Не верно указано значение размера страницы. Переданное значение: " + size);
-        }
     }
 }

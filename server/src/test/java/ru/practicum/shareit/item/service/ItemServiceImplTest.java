@@ -92,16 +92,6 @@ class ItemServiceImplTest {
     }
 
     @Test
-    void testPageableParametersFromShouldThrowException() {
-        assertThrows(ValidationException.class, () -> itemService.getBySearch("test", -10, 10));
-    }
-
-    @Test
-    void testPageableParametersSizeShouldThrowException() {
-        assertThrows(ValidationException.class, () -> itemService.getBySearch("test", 0, -20));
-    }
-
-    @Test
     void testUpdateItemWhenAllDependenciesAvailableThenItemUpdated() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));

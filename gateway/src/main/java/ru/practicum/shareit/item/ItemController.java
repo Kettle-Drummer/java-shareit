@@ -3,6 +3,7 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.error.ValidationException;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 
@@ -43,6 +44,7 @@ public class ItemController {
     public List<ItemDto> getByUser(@RequestParam(defaultValue = "0") int from,
                                               @RequestParam(defaultValue = "10") int size,
                                               @RequestHeader(USER_ID) Long id) {
+        checkPageableParameters(from, size);
         return itemClient.getByUser(id, from, size);
     }
 
@@ -51,6 +53,8 @@ public class ItemController {
                                      @RequestParam(defaultValue = "") String text,
                                      @PositiveOrZero @RequestParam(defaultValue = "0") int from,
                                      @Positive @RequestParam(defaultValue = "10") int size) {
+
+        checkPageableParameters(from, size);
         return itemClient.getBySearch(userId, text, from, size);
     }
 
@@ -59,6 +63,16 @@ public class ItemController {
                                           @RequestHeader(USER_ID) Long userId,
                                           @Valid @RequestBody CommentDto commentDto) {
         return itemClient.saveComment(userId, commentDto, itemId);
+    }
+
+    private void checkPageableParameters(int from, int size) {  //это перенести
+        if (from < 0) {
+            throw new ValidationException("Не верно указано значение первого элемента страницы. " +
+                    "Переданное значение: " + from);
+        }
+        if (size <= 0) {
+            throw new ValidationException("Не верно указано значение размера страницы. Переданное значение: " + size);
+        }
     }
 
 }

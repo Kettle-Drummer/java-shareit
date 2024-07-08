@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpStatusCodeException;
+import ru.practicum.shareit.error.ErrorResponse;
+import ru.practicum.shareit.error.ValidationException;
 
 import javax.validation.ConstraintViolationException;
 
@@ -56,6 +58,13 @@ public class ErrorHandler {
         log.info(e.getMessage(), e);
         e.printStackTrace();
         return new ErrorResponse("Произошла непредвиденная ошибка.");
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handlerValidationException(final ValidationException exception) {
+        log.info("Ошибка валидации {}", exception.getMessage());
+        return new ErrorResponse(exception.getMessage());
     }
 
 }

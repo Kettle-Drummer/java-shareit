@@ -65,7 +65,7 @@ public class ItemController {
         return itemClient.saveComment(userId, commentDto, itemId);
     }
 
-    private void checkPageableParameters(int from, int size) {  //это перенести
+    private void checkPageableParameters(int from, int size) {
         if (from < 0) {
             throw new ValidationException("Не верно указано значение первого элемента страницы. " +
                     "Переданное значение: " + from);

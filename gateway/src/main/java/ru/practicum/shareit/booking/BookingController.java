@@ -51,8 +51,9 @@ public class BookingController {
                                                   @RequestParam(defaultValue = "ALL") String state) {
         checkPageableParameters(from, size);
 
-        try { BookingState.valueOf(state);
-        } catch (RuntimeException e) { //это перенести
+        try {
+            BookingState.valueOf(state);
+        } catch (RuntimeException e) {
             throw new ValidationException("Unknown state: " + state);
         }
         return bookingClient.getByBookerId(bookerId, state, from, size);
@@ -65,14 +66,15 @@ public class BookingController {
                                                  @RequestParam(defaultValue = "ALL") String state) {
         checkPageableParameters(from, size);
 
-        try { BookingState.valueOf(state);
-        } catch (RuntimeException e) { //это перенести
+        try {
+            BookingState.valueOf(state);
+        } catch (RuntimeException e) {
             throw new ValidationException("Unknown state: " + state);
         }
         return bookingClient.getByOwnerId(ownerId, state, from, size);
     }
 
-    private void checkPageableParameters(int from, int size) {  //это перенести
+    private void checkPageableParameters(int from, int size) {
         if (from < 0) {
             throw new ValidationException("Не верно указано значение первого элемента страницы. " +
                     "Переданное значение: " + from);
@@ -86,7 +88,7 @@ public class BookingController {
         if (requestDto.getStart().isBefore(LocalDateTime.now())) {
             throw new ValidationException("Бронь должна начинаться в будущем");
         }
-        if (requestDto.getStart().equals(requestDto.getEnd())) {  //это перенести
+        if (requestDto.getStart().equals(requestDto.getEnd())) {
             throw new ValidationException("Бронь не должна заканчиваться мгновенно");
         }
         if (requestDto.getStart().isAfter(requestDto.getEnd())) {

@@ -46,7 +46,7 @@ public class ItemRequestController {
         return requestClient.getAllPaginated(userId, from, size);
     }
 
-    private void checkPageableParameters(int from, int size) {  //это перенести
+    private void checkPageableParameters(int from, int size) {
         if (from < 0) {
             throw new ValidationException("Не верно указано значение первого элемента страницы. " +
                     "Переданное значение: " + from);

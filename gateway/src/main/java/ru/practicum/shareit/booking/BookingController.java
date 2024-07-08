@@ -50,6 +50,7 @@ public class BookingController {
                                                   @RequestParam(defaultValue = "10") int size,
                                                   @RequestParam(defaultValue = "ALL") String state) {
         checkPageableParameters(from, size);
+
         try { BookingState.valueOf(state);
         } catch (RuntimeException e) { //это перенести
             throw new ValidationException("Unknown state: " + state);
@@ -63,6 +64,7 @@ public class BookingController {
                                                  @RequestParam(defaultValue = "10") int size,
                                                  @RequestParam(defaultValue = "ALL") String state) {
         checkPageableParameters(from, size);
+
         try { BookingState.valueOf(state);
         } catch (RuntimeException e) { //это перенести
             throw new ValidationException("Unknown state: " + state);
